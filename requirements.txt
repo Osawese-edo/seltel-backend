@@ -1,0 +1,24 @@
+# Core
+fastapi
+uvicorn[standard]
+pydantic[email]
+pydantic-settings
+
+# Database
+sqlalchemy[asyncio]
+asyncpg
+alembic
+
+# Auth
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt==4.0.1
+
+# Utilities
+python-dotenv
+
+# Testing
+httpx
+pytest
+pytest-asyncio
+aiosqlite
