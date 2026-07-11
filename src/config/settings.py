@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     # CORS
-    CORS_ORIGINS: List[str] = Field(default=["http://localhost:5173", "https://seltel-frontend.pages.dev"])
+    CORS_ORIGINS: List[str] = Field(default=["http://localhost:5173", "https://seltelmarketspace.pages.dev"])
 
     class Config:
         env_file = ".env"
