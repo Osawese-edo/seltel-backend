@@ -12,9 +12,13 @@ if raw_url.startswith("postgresql://") and "+asyncpg" not in raw_url:
 
 # Auto-add SSL and pooler-compat params for remote databases
 if "localhost" not in raw_url:
+    # asyncpg uses 'ssl' not 'sslmode' — convert if present
+    raw_url = raw_url.replace("sslmode=require", "ssl=require")
+    raw_url = raw_url.replace("sslmode=disable", "ssl=disable")
+
     separator = "&" if "?" in raw_url else "?"
-    if "sslmode" not in raw_url:
-        raw_url += f"{separator}sslmode=require"
+    if "ssl=" not in raw_url:
+        raw_url += f"{separator}ssl=require"
         separator = "&"
     if "prepared_statement_cache_size" not in raw_url:
         raw_url += f"{separator}prepared_statement_cache_size=0"
