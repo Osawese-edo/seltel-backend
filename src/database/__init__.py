@@ -4,7 +4,22 @@ from ..config import get_settings
 
 settings = get_settings()
 
-engine = create_async_engine(settings.DATABASE_URL, echo=settings.DEBUG)
+raw_url = settings.DATABASE_URL
+
+# Auto-add asyncpg driver if missing (Supabase gives postgresql:// without +asyncpg)
+if raw_url.startswith("postgresql://") and "+asyncpg" not in raw_url:
+    raw_url = raw_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+
+# Auto-add SSL and pooler-compat params for remote databases
+if "localhost" not in raw_url:
+    separator = "&" if "?" in raw_url else "?"
+    if "sslmode" not in raw_url:
+        raw_url += f"{separator}sslmode=require"
+        separator = "&"
+    if "prepared_statement_cache_size" not in raw_url:
+        raw_url += f"{separator}prepared_statement_cache_size=0"
+
+engine = create_async_engine(raw_url, echo=settings.DEBUG)
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
