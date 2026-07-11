@@ -9,8 +9,18 @@ router = APIRouter(tags=["Health"])
 
 
 @router.get("/health")
-async def health_check():
-    return {"status": "healthy"}
+async def health_check(db: AsyncSession = Depends(get_db)):
+    try:
+        await db.execute(select(1))
+        db_status = "connected"
+    except Exception as e:
+        db_status = f"disconnected: {str(e)}"
+
+    return {
+        "status": "healthy" if db_status == "connected" else "degraded",
+        "service": "SELTEL API",
+        "database": db_status,
+    }
 
 
 @router.get("/info")
